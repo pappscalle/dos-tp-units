@@ -1,9 +1,9 @@
 <project name="TurboDev" default="dist" basedir=".">
   <description>
-    Build Turbo Pascal
+    Build Turbo Pascal project using DOSEMU and package the output.
   </description>
 
-  <!-- set global properties for this build -->
+  <!-- Set global properties for this build -->
   <property name="src" location="src"/>
   <property name="build" location="build"/>
   <property name="dist" location="dist"/>
@@ -29,7 +29,7 @@
       </fileset>
     </move>
 
-    <!-- Optional: delete .exe and .tpu files from src -->
+    <!-- Delete .exe and .tpu files from src -->
     <delete>
       <fileset dir="${src}">
         <include name="**/*.exe"/>
@@ -56,8 +56,8 @@
 
   <!-- Run compiled executable -->
   <target name="run" depends="compile" description="run the compiled program">
-    <exec executable="dosemu">
-      <arg line="-E ${build}/pixels.exe -K . -dumb"/>
+    <exec executable="dosbox-x">
+      <arg line="-fastlaunch -nolog -exit ${build}/units.exe"/>
     </exec>
   </target>
 </project>

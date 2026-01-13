@@ -2,7 +2,7 @@ program Units;
 
 {$G+}
 
-uses crt, graphics;
+uses crt, gfx;
 
 begin
 

@@ -1,4 +1,4 @@
-unit Graphics;
+unit Gfx;
 
 {$G+}
 
