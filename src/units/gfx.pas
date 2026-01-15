@@ -5,7 +5,6 @@
 *)
 unit Gfx;
 
-
 {$G+}
 
 interface
@@ -16,26 +15,30 @@ const
   SCREEN = $A000;
   SCREEN_WIDTH = 320;
   SCREEN_HEIGHT = 200;
+  SCREEN_SIZE = SCREEN_WIDTH * SCREEN_HEIGHT;
 
+var 
+  ScreenTarget: Pointer;  
 
-
-
-
-procedure SetVideoMode(mode : word);
-procedure SetMCGA;
-procedure SetTextMode;
+procedure SetScreenTarget(prt: Pointer); 
+procedure UseHardwareScreen;
+procedure OpenGraphics;
+procedure CloseGraphics;
 procedure SetPixel(x, y: integer; color: byte);
 procedure ClearScreen(color : byte);
 procedure WaitRetrace;
 
-
-
 implementation
 
-uses
-  crt;
+procedure SetScreenTarget(prt: Pointer);
+begin
+  ScreenTarget := prt;
+end;
 
-
+procedure UseHardwareScreen;
+begin
+  ScreenTarget := Ptr(SCREEN, 0);
+end;
 
 procedure SetVideoMode(mode: word); Assembler;
 asm
@@ -43,62 +46,51 @@ asm
   int   10h
 end;
 
-procedure SetMCGA;
+procedure OpenGraphics;
 begin
   SetVideoMode($13);
+  UseHardwareScreen;
 end;
 
-procedure SetText;
+procedure CloseGraphics;
 begin
   SetVideoMode($03);
 end;
 
-procedure SetTextMode; assembler;
-asm
-  mov   ax, $03
-  int   10h
-end;
-
-
 procedure SetPixel(x, y: integer; color: byte); assembler;
 asm
-  mov   ax, SCREEN
-  mov   es, ax
-  mov   di, y
-  mov   dx, di
-  shl   di, 2
-  add   di, dx
-  shl   di, 6
-  add   di, x
+  les   di, ScreenTarget
+  mov   ax, y
+  mov   dx, ax
+  shl   ax, 2
+  add   ax, dx
+  shl   ax, 6
+  add   ax, x
+  add   di, ax
   mov   al, color
   stosb
 end;
 
-
 procedure ClearScreen(color : byte); assembler;
 asm
-  mov   ax, SCREEN
-  mov   es, ax
-  mov   di, 0
+  les   di, ScreenTarget
   mov   al, color
   mov   ah, al
-  mov   cx, 32000
+  mov   cx, SCREEN_SIZE / 2
   rep   stosw
 end;
 
 procedure WaitRetrace; assembler;
-label
-  l1, l2;
 asm
-    mov dx,3DAh
-l1:
-    in al,dx
-    and al,08h
-    jnz l1
-l2:
-    in al,dx
-    and al,08h
-    jz  l2
+  mov   dx,3DAh
+ @l1:
+  in    al,dx
+  and   al,08h
+  jnz   @l1
+ @l2:
+  in    al,dx
+  and   al,08h
+  jz    @l2
 end;
 
 end.

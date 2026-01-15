@@ -1,10 +1,10 @@
-program Units;
+program UnitsBuf;
 
 {$G+}
 
-uses crt, gfx, box;
+uses crt, gfx, gfxbuf, box;
 
-const 
+const
   NUM_BOXES = 5;
 
 var
@@ -14,19 +14,20 @@ var
 begin
   Randomize;
   OpenGraphics;
-  
+  InitBuffer;             
   for i := 1 to NUM_BOXES do
     boxes[i].Init;
 
   repeat
     for i := 1 to NUM_BOXES do boxes[i].Move;
 
-    WaitRetrace;
     for i := 1 to NUM_BOXES do boxes[i].Erase;
     for i := 1 to NUM_BOXES do boxes[i].Draw;
 
+    WaitRetrace;
+    FlipBuffer;            
   until KeyPressed;
 
+  DoneBuffer;             
   CloseGraphics;
-
 end.
