@@ -108,7 +108,7 @@ asm
   jl @draw
   xchg bx,cx
  @draw:
-  mov ax, SCREEN
+  mov ax, ScreenTarget
   mov es, ax
   mov ax, [y]
   mov di, ax
@@ -134,7 +134,7 @@ asm
   jl  @draw
   xchg bx, cx
  @draw:
-  mov ax, SCREEN
+  mov ax, ScreenTarget
   mov es, ax
   mov ax, bx
   mov di, ax
